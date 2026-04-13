@@ -1,0 +1,26 @@
+# Example rules file for Codex execution policy.
+#
+# Notes:
+# - Official docs describe rules mainly as user/team policy, not as the main
+#   project steering mechanism.
+# - Keep runtime steering in AGENTS/state docs; use rules for command safety.
+
+prefix_rule(
+    pattern = ["rm", "-rf"],
+    decision = "prompt",
+    justification = "Destructive deletion should always require review.",
+    match = [
+        "rm -rf build",
+        "rm -rf /tmp/output",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Pushing changes should be a conscious action.",
+    match = [
+        "git push origin main",
+        "git push --force-with-lease origin feature-branch",
+    ],
+)
