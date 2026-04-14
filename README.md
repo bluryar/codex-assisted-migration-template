@@ -1,5 +1,7 @@
 # Codex Assisted Migration Template
 
+Languages: English | [中文](README_zh.md)
+
 This folder is a standalone template for running a long-horizon AI-assisted migration project such as:
 
 - PyTorch -> GGML
