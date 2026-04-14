@@ -171,6 +171,76 @@ This template works best when:
 - the reference Torch repo stays mostly read-only
 - the target runtime repo owns the migration tooling and evidence flow
 
+## Using with a Torch model
+
+For a Torch model migration, the goal is not to instantiate every template.
+Start with the smallest control plane that prevents drift:
+
+1. Fill the hot state docs: `docs/state/CURRENT_ARCHITECTURE.md`, `docs/state/ACTIVE_STAGE.md`, `docs/state/TEMP_EXCEPTIONS.md`, and `docs/state/EVALUATION_LADDER.md`.
+2. Use `docs/templates/HARNESS_CONTEXT_TEMPLATE.md` as a scratchpad for project-specific commands, model I/O, the runtime path, and extension recipes. Fold only stable, high-signal rules back into `AGENTS.md` or state docs.
+3. Keep the original Torch implementation isolated under `third_party/` or another clearly marked reference location.
+4. Put reference runners, trace capture, golden export, and comparison tools under `tools/`, not inside the Torch reference implementation.
+5. Create `docs/gap-analysis.md`, `docs/roadmap.md`, `docs/ci-status.md`, and `docs/specs/` only when the project actually needs those artifacts.
+
+Recommended initial layout:
+
+```text
+third_party/original_torch_model/   # semantic authority, mostly read-only
+tools/
+  run_reference.py                  # calls the Torch reference
+  export_golden.py                  # writes golden inputs/outputs
+  compare_outputs.py                # compares target vs reference
+docs/
+  state/
+  specs/                            # create on demand
+src/ or runtime/                    # target implementation
+```
+
+Recommended migration stages:
+
+1. M0 - Reference grounding. Run the Torch model, identify inputs, outputs, tokenizer or processor requirements, weights, state/cache, and golden generation. Produce evidence and gap analysis, not target runtime code.
+2. M1 - Runtime contract. Freeze public API, tensor layout, ownership/lifetime, loader/weights ownership, state/cache ownership, and output ownership. Use ADRs and specs when decisions should outlive the task.
+3. M2 - Smallest executable slice. Migrate the narrowest path that proves the default runtime path, such as embedding plus one block plus logits, or another explicit subgraph.
+4. M3 - Full semantic parity. Expand to the full forward/decode path with golden tests and CI gates.
+5. M4 - Performance and footprint. Optimize only after contract, ownership, lifetime, and evaluation gates are clear.
+
+Use Agent Team Mode only after the project has real document handoff points:
+
+- PM owns roadmap ordering, value/risk grades, milestone exit criteria, and feature status.
+- Architect owns ADRs, gap analysis, runtime boundaries, and reference divergence decisions.
+- Engineer implements only after a task card, spec, test plan, and file ownership are clear.
+- QA owns test plans, CI status, golden coverage, evidence quality, and "what this does not prove" notes.
+
+Example first prompt:
+
+```text
+We are using this template to migrate a Torch model to a target runtime.
+Do not implement code yet.
+
+Read AGENTS.md and docs/state/* hot context, then do M0 reference grounding:
+1. Fill or cite a task card.
+2. Analyze only the Torch reference inputs, outputs, weights, state/cache, and default inference path.
+3. Draft docs/gap-analysis.md.
+4. Propose the smallest tools/ reference runner and golden exporter plan.
+5. Do not modify the reference implementation or introduce a target runtime API.
+```
+
+Example Agent Team Mode prompt for the next stage:
+
+```text
+Enable Agent Team Mode for M1 runtime contract design.
+
+PM owns roadmap ordering.
+Architect owns runtime boundary and ADR decisions.
+QA owns model-io-test-plan.
+Engineer does not write code yet; only identify the smallest implementation slice and file ownership.
+
+Freeze the smallest default path: weights -> runtime state -> forward/decode -> output.
+Do not optimize, add debug-only public APIs, or add host-visible intermediates for trace convenience.
+```
+
+The main failure mode in Torch migrations is keeping two truths alive for too long: the Torch reference and the target runtime. Use this template to make the reference a semantic authority, the target runtime the single canonical default path, and golden evidence the bridge between them.
+
 ## Files to customize first
 
 Customize these first:
