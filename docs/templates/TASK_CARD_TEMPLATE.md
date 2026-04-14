@@ -19,6 +19,9 @@ Temporary exceptions allowed:
 Stop if:
 Exit gate:
 Escalate to strict preflight?:
+Agent Team Mode:
+Role/file ownership:
+Shared artifacts:
 ```
 
 ## Notes
@@ -27,3 +30,4 @@ Escalate to strict preflight?:
 - If the task cannot fit on one card, split the task.
 - If the task touches multiple stages, it is not ready.
 - Escalate to strict preflight when the task touches public API, default path selection, runtime ownership/lifetime, state/output/cache, fallback behavior, benchmark-driven helpers, or performance optimization.
+- If Agent Team Mode is enabled, cite `docs/guides/AGENT_TEAM_MODE_zh.md` and assign PM, Architect, Engineer, and QA ownership before spawning subagents.

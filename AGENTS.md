@@ -137,13 +137,16 @@ If the project uses an upstream or original Torch implementation:
 
 ## Subagents
 
-Use subagents only when explicitly requested, or when a human explicitly asks for a structured discussion with multiple perspectives.
+Use subagents only when explicitly requested, when a human explicitly asks for a structured discussion with multiple perspectives, or when a task card explicitly enables Agent Team Mode as described in `docs/guides/AGENT_TEAM_MODE_zh.md`.
+
+The default path is still a single main agent. Agent Team Mode is for large, document-driven migration work where PM, Architect, Engineer, and QA ownership is written down before execution.
 
 When subagents are used:
 
 - keep each subagent narrow
 - do not duplicate work across them
 - use them to reduce context pollution, not increase it
+- define role and file ownership before allowing write-heavy parallel work
 
 ## Documents
 

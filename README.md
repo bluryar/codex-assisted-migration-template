@@ -49,7 +49,8 @@ This template adds the missing governance layer:
 - temporary exception tracking
 - deletion review
 - evaluation ladder
-- custom subagents for architecture, evaluation, and context hygiene
+- custom subagents for architecture, evaluation, context hygiene, and optional four-role Agent Team Mode
+- harness-context, roadmap, gap-analysis, CI-status, feature-status, spec, test-plan, and reference-divergence templates for document-driven migration work
 
 In short:
 
@@ -83,6 +84,7 @@ Cold context:
 - `adr/` when architecture decisions start accumulating
 - `evidence/` when raw traces, benchmark logs, or experiment artifacts need a home
 - `changelog/` when you want to preserve stage-by-stage history outside hot context
+- `docs/specs/` when Agent Team Mode needs spec and test-plan artifacts
 
 Operational controls:
 
@@ -92,6 +94,15 @@ Operational controls:
 - `.codex/hooks.json`
 - `.codex/hooks/`
 - `codex/rules/`
+- `docs/guides/AGENT_TEAM_MODE_zh.md`
+- `docs/templates/HARNESS_CONTEXT_TEMPLATE.md`
+- `docs/templates/ROADMAP_TEMPLATE.md`
+- `docs/templates/GAP_ANALYSIS_TEMPLATE.md`
+- `docs/templates/CI_STATUS_TEMPLATE.md`
+- `docs/templates/FEATURE_STATUS_TEMPLATE.md`
+- `docs/templates/SPEC_TEMPLATE.md`
+- `docs/templates/TEST_PLAN_TEMPLATE.md`
+- `docs/templates/REFERENCE_DIVERGENCE_POLICY_TEMPLATE.md`
 - `pyproject.toml`
 - `.python-version`
 - `third_party/`
@@ -119,7 +130,8 @@ That prevents old workarounds, old exceptions, and old plans from silently steer
 7. Treat `codex/rules/` as examples for user/team policy, not as the main project steering system.
 8. Put the original Torch reference repo under `third_party/` as a read-only source, not as an actively evolving migration surface.
 9. Keep trace/export/golden wrappers in `tools/`, owned by the migration project rather than by the reference submodule.
-10. Create `adr/`, `evidence/`, and `changelog/` only when the project actually needs them.
+10. Enable Agent Team Mode only when the task card records PM, Architect, Engineer, and QA ownership.
+11. Create `adr/`, `docs/specs/`, `evidence/`, and `changelog/` only when the project actually needs them.
 
 The bundled hooks and shell snippets assume the template contents live at the
 repository root. If you keep this folder nested while evaluating it, either run
@@ -153,7 +165,8 @@ This template works best when:
 
 - one human acts as the steering authority
 - Codex does implementation and synthesis
-- subagents do narrow, lens-specific analysis
+- subagents do narrow, lens-specific analysis by default
+- Agent Team Mode is explicitly enabled for large, spec-driven migration slices
 - hooks add reminders, not heavy-handed automation
 - the reference Torch repo stays mostly read-only
 - the target runtime repo owns the migration tooling and evidence flow
@@ -167,6 +180,7 @@ Customize these first:
 - `docs/state/ACTIVE_STAGE.md`
 - `docs/state/TEMP_EXCEPTIONS.md`
 - `.codex/config.toml`
+- `docs/guides/AGENT_TEAM_MODE_zh.md`
 - `docs/guides/REFERENCE_INTEGRATION_zh.md`
 
 ## Notes on hooks and rules
@@ -191,7 +205,16 @@ codex-assisted-migration-template/
     templates/
       TASK_CARD_TEMPLATE.md
       DELETION_REVIEW_TEMPLATE.md
+      HARNESS_CONTEXT_TEMPLATE.md
+      ROADMAP_TEMPLATE.md
+      GAP_ANALYSIS_TEMPLATE.md
+      CI_STATUS_TEMPLATE.md
+      FEATURE_STATUS_TEMPLATE.md
+      SPEC_TEMPLATE.md
+      TEST_PLAN_TEMPLATE.md
+      REFERENCE_DIVERGENCE_POLICY_TEMPLATE.md
     guides/
+      AGENT_TEAM_MODE_zh.md
       REFERENCE_INTEGRATION_zh.md
     notes/
       OFFICIAL_DOC_SUPPLEMENTS_zh.md
@@ -207,12 +230,20 @@ codex-assisted-migration-template/
     hooks.json
     hooks/
     agents/
+      team_pm.toml
+      team_architect.toml
+      team_engineer.toml
+      team_qa.toml
   pyproject.toml
   .python-version
   third_party/
   tools/
   # create on demand:
   # adr/
+  # docs/roadmap.md
+  # docs/gap-analysis.md
+  # docs/ci-status.md
+  # docs/specs/
   # evidence/
   # changelog/
   codex/
